@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-gereal.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-gereal.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-gereal.png">
+  <link rel="mask-icon" href="/images/my-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"single-smile.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.12.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="现在开发网站可比以前容易的多了，只要在电脑上点点几下，你就能拥有一台自己的服务器，这里我选择阿里服务器。主要用的是宝塔+wordpress，甚至你不需要写一行代码，就能拥有自己的个人网站。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="wordpress搭建个人博客网站">
+<meta property="og:url" content="https://single-smile.github.io/create-blog/index.html">
+<meta property="og:site_name" content="single&#39;s blog">
+<meta property="og:description" content="现在开发网站可比以前容易的多了，只要在电脑上点点几下，你就能拥有一台自己的服务器，这里我选择阿里服务器。主要用的是宝塔+wordpress，甚至你不需要写一行代码，就能拥有自己的个人网站。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://single-smile.github.io/create-blog/image-20220807001302804.png">
+<meta property="og:image" content="https://single-smile.github.io/create-blog/image-20220807002002022.png">
+<meta property="og:image" content="https://single-smile.github.io/create-blog/image-20220807141437629.png">
+<meta property="og:image" content="https://single-smile.github.io/create-blog/image-20220807142441532.png">
+<meta property="og:image" content="https://single-smile.github.io/create-blog/image-20220807143423214.png">
+<meta property="og:image" content="https://single-smile.github.io/create-blog/image-20220807144326822.png">
+<meta property="og:image" content="https://single-smile.github.io/create-blog/image-20220807144746927.png">
+<meta property="og:image" content="https://single-smile.github.io/create-blog/image-20220807145422902.png">
+<meta property="article:published_time" content="2022-07-29T12:33:15.000Z">
+<meta property="article:modified_time" content="2022-08-22T10:57:29.508Z">
+<meta property="article:author" content="Single">
+<meta property="article:tag" content="wordpress">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://single-smile.github.io/create-blog/image-20220807001302804.png">
+
+
+<link rel="canonical" href="https://single-smile.github.io/create-blog/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://single-smile.github.io/create-blog/","path":"create-blog/","title":"wordpress搭建个人博客网站"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>wordpress搭建个人博客网站 | single's blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">single's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%AE%9D%E5%A1%94"><span class="nav-number">1.</span> <span class="nav-text">安装宝塔</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85wordpress"><span class="nav-number">2.</span> <span class="nav-text">安装wordpress</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Single"
+      src="/images/me.jpg">
+  <p class="site-author-name" itemprop="name">Single</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/single-smile" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;single-smile" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/1353470342" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;1353470342" rel="noopener" target="_blank"><i class="fab fa-bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://single-smile.github.io/create-blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/me.jpg">
+      <meta itemprop="name" content="Single">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="single's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="wordpress搭建个人博客网站 | single's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          wordpress搭建个人博客网站
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-29 20:33:15" itemprop="dateCreated datePublished" datetime="2022-07-29T20:33:15+08:00">2022-07-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-22 18:57:29" itemprop="dateModified" datetime="2022-08-22T18:57:29+08:00">2022-08-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>现在开发网站可比以前容易的多了，只要在电脑上点点几下，你就能拥有一台自己的服务器，这里我选择阿里服务器。主要用的是宝塔+wordpress，甚至你不需要写一行代码，就能拥有自己的个人网站。</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="安装宝塔"><a href="#安装宝塔" class="headerlink" title="安装宝塔"></a>安装宝塔</h2><p>首先使用SSH远程连接到服务器，再输入以下指令即可。<br><code>yum install -y wget &amp;&amp; wget -O install.sh http://download.bt.cn/install/install_6.0.sh &amp;&amp; sh install.sh ed8484bec</code><br>注意我使用的系统是<mark>centos7</mark>，其他系统请查看官网链接<a target="_blank" rel="noopener" href="https://www.bt.cn/new/download.html">宝塔面板下载，免费全能的服务器运维软件 (bt.cn)</a></p>
+<p>安装成功后会有以下信息，然后根据提示输入网址及用户密码就可以登录宝塔面板啦😘<img src="/create-blog/image-20220807001302804.png" class="" title="image-20220807001302804"></p>
+<p>之后你会看到安装在云服务器上的宝塔面板，有关于你服务器的各种信息。</p>
+<img src="/create-blog/image-20220807002002022.png" class="" title="image-20220807002002022">
+
+<p>初次进入面板会提示安装套件，建议选择<mark>编译安装</mark>，php建议选高一点，比如<mark>php7.4</mark>，对wordpress兼容性好。</p>
+<img src="/create-blog/image-20220807141437629.png" class="">
+
+<h2 id="安装wordpress"><a href="#安装wordpress" class="headerlink" title="安装wordpress"></a>安装wordpress</h2><p>在软件商店里搜寻<mark>wordpress</mark>，选择<mark>一键部署</mark>。</p>
+<img src="/create-blog/image-20220807142441532.png" class="" title="image-20220807142441532">
+
+<p>然后输入你的域名即可。<mark>记住数据库名称和密码</mark>，不记也没关系，可在宝塔面板-数据库-查看密码中找到。</p>
+<img src="/create-blog/image-20220807143423214.png" class="" title="image-20220807143423214">
+
+<p>之后会出现以下弹窗，点击访问站点即可</p>
+<img src="/create-blog/image-20220807144326822.png" class="" title="image-20220807144326822">
+
+<p>最后根据提示安装即可。</p>
+<img src="/create-blog/image-20220807144746927.png" class="" title="image-20220807144746927">
+
+<p>last but not least，我们的网站就建好了，点击查看站点。你就可以看到你的网站了。</p>
+<img src="/create-blog/image-20220807145422902.png" class="" title="image-20220807145422902">
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="Single 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.png" alt="Single 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/wordpress/" rel="tag"># wordpress</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/leaning-ros/" rel="prev" title="learning ros">
+                  <i class="fa fa-chevron-left"></i> learning ros
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/keyboard-usb-hid/" rel="next" title="DIY键盘教程（一）配置USB HID">
+                  DIY键盘教程（一）配置USB HID <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Single</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

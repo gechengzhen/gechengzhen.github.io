@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-gereal.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-gereal.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-gereal.png">
+  <link rel="mask-icon" href="/images/my-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"single-smile.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.12.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="首先键盘使用的主控是stm32f401CCU6，开发方式为cubemx+keil。键盘主要采用的是USB HID+矩阵键盘扫描，灯光部分使用的是ws2812。此教程适合有一定stm32基础的人。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DIY键盘教程（一）配置USB HID">
+<meta property="og:url" content="https://single-smile.github.io/keyboard-usb-hid/index.html">
+<meta property="og:site_name" content="single&#39;s blog">
+<meta property="og:description" content="首先键盘使用的主控是stm32f401CCU6，开发方式为cubemx+keil。键盘主要采用的是USB HID+矩阵键盘扫描，灯光部分使用的是ws2812。此教程适合有一定stm32基础的人。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://single-smile.github.io/keyboard-usb-hid/image-20220821223709724.png">
+<meta property="og:image" content="https://single-smile.github.io/keyboard-usb-hid/image-20220822170957632.png">
+<meta property="og:image" content="https://single-smile.github.io/keyboard-usb-hid/image-20220822173613844.png">
+<meta property="og:image" content="https://single-smile.github.io/keyboard-usb-hid/image-20220822180941299.png">
+<meta property="og:image" content="https://single-smile.github.io/keyboard-usb-hid/image-20220822180338523.png">
+<meta property="og:image" content="https://single-smile.github.io/keyboard-usb-hid/image-20220822181922530.png">
+<meta property="og:image" content="https://single-smile.github.io/keyboard-usb-hid/IMG_20220822_183416_edit_199875810136167.jpg">
+<meta property="article:published_time" content="2022-08-22T10:51:16.000Z">
+<meta property="article:modified_time" content="2022-08-22T10:57:44.518Z">
+<meta property="article:author" content="Single">
+<meta property="article:tag" content="keyboard">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://single-smile.github.io/keyboard-usb-hid/image-20220821223709724.png">
+
+
+<link rel="canonical" href="https://single-smile.github.io/keyboard-usb-hid/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://single-smile.github.io/keyboard-usb-hid/","path":"keyboard-usb-hid/","title":"DIY键盘教程（一）配置USB HID"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>DIY键盘教程（一）配置USB HID | single's blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">single's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#keil%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">keil配置</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Single"
+      src="/images/me.jpg">
+  <p class="site-author-name" itemprop="name">Single</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/single-smile" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;single-smile" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/1353470342" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;1353470342" rel="noopener" target="_blank"><i class="fab fa-bilibili fa-fw"></i>bilibili</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://single-smile.github.io/keyboard-usb-hid/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/me.jpg">
+      <meta itemprop="name" content="Single">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="single's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="DIY键盘教程（一）配置USB HID | single's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DIY键盘教程（一）配置USB HID
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-08-22 18:51:16 / 修改时间：18:57:44" itemprop="dateCreated datePublished" datetime="2022-08-22T18:51:16+08:00">2022-08-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>首先键盘使用的主控是stm32f401CCU6，开发方式为cubemx+keil。键盘主要采用的是USB HID+矩阵键盘扫描，灯光部分使用的是ws2812。此教程适合有一定stm32基础的人。</p>
+</blockquote>
+<span id="more"></span>
+
+<p>##Cubemx配置</p>
+<ul>
+<li>首先用cubemx新建一个工程</li>
+<li>选择USB_OTG_FS(有的芯片是USB)</li>
+<li>mode里选择Device_Only</li>
+</ul>
+<img src="/keyboard-usb-hid/image-20220821223709724.png" class="" title="image-20220821223709724">
+
+<ul>
+<li>然后Middleware里选择USB_DEVICE</li>
+<li>Class For FS IP 里选择Human Interface Device Class(HID)</li>
+<li>其中VID和PID可以改成任意你喜欢的值，MANUFACTURER_STRING改成任意你喜欢的值</li>
+<li>最后生成代码</li>
+</ul>
+<img src="/keyboard-usb-hid/image-20220822170957632.png" class="" title="image-20220822170957632">
+
+<h2 id="keil配置"><a href="#keil配置" class="headerlink" title="keil配置"></a>keil配置</h2><ul>
+<li>打开usb_hid.c文件</li>
+<li>在文件中搜索<code>HID_MOUSE_ReportDesc</code>（ctrl+f）</li>
+<li>因为cubemx默认是生成鼠标报告描述符，所以要将其替换为键盘报告描述符</li>
+<li>所以将鼠标描述符<strong>内容</strong>替换成以下键盘报告描述符<strong>内容</strong>即可</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> ReportDescriptor[<span class="number">63</span>] = &#123;</span><br><span class="line">    <span class="number">0x05</span>, <span class="number">0x01</span>,                    <span class="comment">// USAGE_PAGE (Generic Desktop)</span></span><br><span class="line">    <span class="number">0x09</span>, <span class="number">0x06</span>,                    <span class="comment">// USAGE (Keyboard)</span></span><br><span class="line">    <span class="number">0xa1</span>, <span class="number">0x01</span>,                    <span class="comment">// COLLECTION (Application)</span></span><br><span class="line">    <span class="number">0x05</span>, <span class="number">0x07</span>,                    <span class="comment">//   USAGE_PAGE (Keyboard)</span></span><br><span class="line">    <span class="number">0x19</span>, <span class="number">0xe0</span>,                    <span class="comment">//   USAGE_MINIMUM (Keyboard LeftControl)</span></span><br><span class="line">    <span class="number">0x29</span>, <span class="number">0xe7</span>,                    <span class="comment">//   USAGE_MAXIMUM (Keyboard Right GUI)</span></span><br><span class="line">    <span class="number">0x15</span>, <span class="number">0x00</span>,                    <span class="comment">//   LOGICAL_MINIMUM (0)</span></span><br><span class="line">    <span class="number">0x25</span>, <span class="number">0x01</span>,                    <span class="comment">//   LOGICAL_MAXIMUM (1)</span></span><br><span class="line">    <span class="number">0x75</span>, <span class="number">0x01</span>,                    <span class="comment">//   REPORT_SIZE (1)</span></span><br><span class="line">    <span class="number">0x95</span>, <span class="number">0x08</span>,                    <span class="comment">//   REPORT_COUNT (8)</span></span><br><span class="line">    <span class="number">0x81</span>, <span class="number">0x02</span>,                    <span class="comment">//   INPUT (Data,Var,Abs)</span></span><br><span class="line">    <span class="number">0x95</span>, <span class="number">0x01</span>,                    <span class="comment">//   REPORT_COUNT (1)</span></span><br><span class="line">    <span class="number">0x75</span>, <span class="number">0x08</span>,                    <span class="comment">//   REPORT_SIZE (8)</span></span><br><span class="line">    <span class="number">0x81</span>, <span class="number">0x03</span>,                    <span class="comment">//   INPUT (Cnst,Var,Abs)</span></span><br><span class="line">    <span class="number">0x95</span>, <span class="number">0x05</span>,                    <span class="comment">//   REPORT_COUNT (5)</span></span><br><span class="line">    <span class="number">0x75</span>, <span class="number">0x01</span>,                    <span class="comment">//   REPORT_SIZE (1)</span></span><br><span class="line">    <span class="number">0x05</span>, <span class="number">0x08</span>,                    <span class="comment">//   USAGE_PAGE (LEDs)</span></span><br><span class="line">    <span class="number">0x19</span>, <span class="number">0x01</span>,                    <span class="comment">//   USAGE_MINIMUM (Num Lock)</span></span><br><span class="line">    <span class="number">0x29</span>, <span class="number">0x05</span>,                    <span class="comment">//   USAGE_MAXIMUM (Kana)</span></span><br><span class="line">    <span class="number">0x91</span>, <span class="number">0x02</span>,                    <span class="comment">//   OUTPUT (Data,Var,Abs)</span></span><br><span class="line">    <span class="number">0x95</span>, <span class="number">0x01</span>,                    <span class="comment">//   REPORT_COUNT (1)</span></span><br><span class="line">    <span class="number">0x75</span>, <span class="number">0x03</span>,                    <span class="comment">//   REPORT_SIZE (3)</span></span><br><span class="line">    <span class="number">0x91</span>, <span class="number">0x03</span>,                    <span class="comment">//   OUTPUT (Cnst,Var,Abs)</span></span><br><span class="line">    <span class="number">0x95</span>, <span class="number">0x06</span>,                    <span class="comment">//   REPORT_COUNT (6)</span></span><br><span class="line">    <span class="number">0x75</span>, <span class="number">0x08</span>,                    <span class="comment">//   REPORT_SIZE (8)</span></span><br><span class="line">    <span class="number">0x15</span>, <span class="number">0x00</span>,                    <span class="comment">//   LOGICAL_MINIMUM (0)</span></span><br><span class="line">    <span class="number">0x25</span>, <span class="number">0x65</span>,                    <span class="comment">//   LOGICAL_MAXIMUM (101)</span></span><br><span class="line">    <span class="number">0x05</span>, <span class="number">0x07</span>,                    <span class="comment">//   USAGE_PAGE (Keyboard)</span></span><br><span class="line">    <span class="number">0x19</span>, <span class="number">0x00</span>,                    <span class="comment">//   USAGE_MINIMUM (Reserved (no event indicated))</span></span><br><span class="line">    <span class="number">0x29</span>, <span class="number">0x65</span>,                    <span class="comment">//   USAGE_MAXIMUM (Keyboard Application)</span></span><br><span class="line">    <span class="number">0x81</span>, <span class="number">0x00</span>,                    <span class="comment">//   INPUT (Data,Ary,Abs)</span></span><br><span class="line">    <span class="number">0xc0</span>                           <span class="comment">// END_COLLECTION</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>然后将<strong>所有的</strong><code>HID_MOUSE_ReportDesc</code>改为<code>HID_KEYBOARD_ReportDesc</code>（ctrl+h）</p>
+<p>  <strong>如下图所示：</strong></p>
+</li>
+</ul>
+<img src="/keyboard-usb-hid/image-20220822173613844.png" class="" title="image-20220822173613844">
+
+<ul>
+<li>打开usbd_hid.h文件</li>
+<li>找到<code>#define HID_MOUSE_REPORT_DESC_SIZE    74U</code>（ctrl+f）替换为<br><code>#define HID_KEYBOARD_REPORT_DESC_SIZE    63U</code></li>
+<li>将<strong>所有文件中</strong>的<code>HID_MOUSE_REPORT_DESC_SIZE</code>替换为<code>HID_KEYBOARD_REPORT_DESC_SIZE</code>（ctrl+h）</li>
+</ul>
+<img src="/keyboard-usb-hid/image-20220822180941299.png" class="" title="image-20220822180941299">
+
+<ul>
+<li>然后找到红线那一行，0x02改为0x01，注释里说了1为键盘</li>
+</ul>
+<img src="/keyboard-usb-hid/image-20220822180338523.png" class="" title="image-20220822180338523">
+
+<ul>
+<li>打开usb_device.h文件添加一行<code>extern USBD_HandleTypeDef hUsbDeviceFS;</code></li>
+</ul>
+<img src="/keyboard-usb-hid/image-20220822181922530.png" class="" title="image-20220822181922530">
+
+<ul>
+<li>在main.c添加头文件**#include “usbd_hid.h”**及以下试验代码</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/* USER CODE BEGIN 2 */</span></span><br><span class="line"><span class="type">uint8_t</span> report[<span class="number">8</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="comment">/* USER CODE END 2 */</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">/* Infinite loop */</span></span><br><span class="line"> <span class="comment">/* USER CODE BEGIN WHILE */</span></span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line"> &#123;</span><br><span class="line"> 	HAL_Delay(<span class="number">2000</span>);</span><br><span class="line">	report[<span class="number">2</span>] = <span class="number">4</span>;</span><br><span class="line">	USBD_HID_SendReport(&amp;hUsbDeviceFS,report,<span class="number">8</span>);</span><br><span class="line">	HAL_Delay(<span class="number">20</span>);</span><br><span class="line">	report[<span class="number">2</span>] = <span class="number">0</span>;</span><br><span class="line">	USBD_HID_SendReport(&amp;hUsbDeviceFS,report,<span class="number">8</span>);</span><br><span class="line">	HAL_Delay(<span class="number">1000</span>);</span><br><span class="line">   <span class="comment">/* USER CODE END WHILE */</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 3 */</span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>编译烧录</li>
+<li>打开记事本</li>
+<li>stm32通过type-c连接至电脑。</li>
+</ul>
+<img src="/keyboard-usb-hid/IMG_20220822_183416_edit_199875810136167.jpg" class="" title="IMG_20220822_183416_edit_199875810136167">
+
+<ul>
+<li>两秒钟后不断打印aaaa…则配置成功🥳</li>
+</ul>
+<p>##未完待续。。。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="Single 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.png" alt="Single 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/keyboard/" rel="tag"># keyboard</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/create-blog/" rel="prev" title="wordpress搭建个人博客网站">
+                  <i class="fa fa-chevron-left"></i> wordpress搭建个人博客网站
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/simulation-electron/" rel="next" title="信号与模电">
+                  信号与模电 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Single</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

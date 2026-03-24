@@ -1,0 +1,48 @@
+{{- $destination := .Destination | safeURL -}}
+{{- $resourcePath := strings.TrimPrefix "./" $destination -}}
+{{- $image := .Page.Resources.GetMatch (printf "%s" $resourcePath) -}}
+{{- $Permalink := $destination | relURL | safeURL -}}
+{{- $alt := .PlainText | safeHTML -}}
+{{- $Width := 0 -}}
+{{- $Height := 0 -}}
+{{- $Srcset := "" -}}
+{{- $parsed := urls.Parse $destination -}}
+{{- $isRemote := or $parsed.IsAbs (hasPrefix $destination "//") -}}
+{{- $isRootRelative := hasPrefix $destination "/" -}}
+
+{{/* SVG and external images won't work with gallery layout, because their width and height attributes are unknown */}}
+{{- $galleryImage := false -}}
+
+{{- if $image -}}
+	{{- $notSVG := ne (path.Ext $resourcePath) ".svg" -}}
+	{{- $Permalink = $image.RelPermalink -}}
+
+	{{- if $notSVG -}}
+		{{- $Width = $image.Width -}}
+		{{- $Height = $image.Height -}}
+		{{- $galleryImage = true -}}
+
+		{{- if (default true .Page.Site.Params.imageProcessing.content.enabled) -}}
+			{{- $small := $image.Resize `480x` -}}
+			{{- $big := $image.Resize `1024x` -}}
+			{{- $Srcset = printf `%s 480w, %s 1024w` $small.RelPermalink $big.RelPermalink -}}
+	{{- end -}}
+	{{- end -}}
+{{- else if and (not $isRemote) (not $isRootRelative) -}}
+	{{- $Permalink = printf "%s%s" .Page.RelPermalink $resourcePath | safeURL -}}
+{{- end -}}
+
+<img src="{{ $Permalink }}"
+	{{ with $Width }}width="{{ . }}"{{ end }}
+	{{ with $Height }}height="{{ . }}"{{ end }}
+	{{ with $Srcset }}srcset="{{ . }}"{{ end }}
+	loading="lazy"
+	{{ with $alt }}
+		alt="{{ . }}"
+	{{ end }}
+	{{ if $galleryImage }}
+		class="gallery-image" 
+		data-flex-grow="{{ div (mul $image.Width 100) $image.Height }}"
+		data-flex-basis="{{ div (mul $image.Width 240) $image.Height }}px"
+	{{ end }}
+>
